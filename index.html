@@ -181,13 +181,16 @@
     function initMap() {
       map = new google.maps.Map(document.getElementById("map"), {
         zoom: 10,
-        center: { lat: 15.2993, lng: 74.1240 },
-        styles: [
-          { elementType: "geometry", stylers: [{ color: "#1d2c4d" }] },
-          { elementType: "labels.text.stroke", stylers: [{ color: "#1a3646" }] },
-          { elementType: "labels.text.fill", stylers: [{ color: "#8ec3b9" }] }
-        ]
-      });
+        center: { lat: 15.2993, lng: 73.9240 },
+       styles: [
+  { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
+  { elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
+  { elementType: "labels.text.stroke", stylers: [{ color: "#f5f5f5" }] },
+  { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
+  { featureType: "road.arterial", elementType: "geometry", stylers: [{ color: "#fdfcf8" }] },
+  { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#f8c967" }] },
+  { featureType: "water", elementType: "geometry", stylers: [{ color: "#c9c9c9" }] }
+]
 
       new google.maps.Marker({
         position: { lat: 15.566862073096088, lng: 73.78208610902905 },
