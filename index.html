@@ -1,173 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Goa Trip Itinerary - Let's Goooo</title>
+  <title>Goa Trip Itinerary</title>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    body {
+    body, html {
       margin: 0;
-      font-family: sans-serif;
-      background-color: #f8f9fa;
-      color: #333;
+      padding: 0;
+      font-family: 'Google Sans', sans-serif;
+      color: white;
+      height: 100vh;
+      overflow-x: hidden;
+      background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: -1;
     }
 
     header {
-      background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e');
-      background-size: cover;
-      background-position: center;
-      height: 250px;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.5rem;
-      text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
+      text-align: center;
+      padding: 2rem 1rem;
     }
 
-    .container {
-      padding: 1rem;
+    header h1 {
+      font-size: 3rem;
+      margin: 0;
+    }
+
+    #itinerary {
+      background: rgba(0,0,0,0.6);
+      margin: 2rem auto;
+      padding: 1.5rem;
+      width: 90%;
       max-width: 900px;
-      margin: auto;
+      border-radius: 1rem;
     }
 
     #map {
+      width: 90%;
+      max-width: 900px;
       height: 400px;
-      width: 100%;
-      margin-bottom: 1rem;
+      margin: 1rem auto;
+      border-radius: 1rem;
+      border: 2px solid #fff;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
 
     select {
-      padding: 0.5rem;
+      width: 90%;
+      max-width: 900px;
+      padding: 0.7rem;
+      margin: 0 auto 1rem;
+      display: block;
+      border-radius: 0.6rem;
+      border: none;
+      background: rgba(255,255,255,0.9);
+      color: #333;
       font-size: 1rem;
-      margin-bottom: 1rem;
-    }
-
-    .day-section {
-      margin-bottom: 2rem;
-      padding: 1rem;
-      border-radius: 8px;
-      background: #fff;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .day-section h2 {
-      margin-top: 0;
     }
   </style>
 </head>
-
 <body>
   <header>
-    Goa Trip Itinerary
+    <h1>Goa Monsoon Trip</h1>
   </header>
 
-  <div class="container">
+  <select id="daySelector" onchange="showItinerary()">
+    <option value="">-- Select Day --</option>
+    <option value="sat">Saturday (Arrival, Para, North Goa)</option>
+    <option value="sun">Sunday (North Goa)</option>
+    <option value="mon">Monday (Check-in South Goa)</option>
+    <option value="tue">Tuesday (South Goa exploration)</option>
+    <option value="wed">Wednesday (Departure)</option>
+  </select>
 
-    <select id="daySelector">
-      <option value="all">Show All Days</option>
-      <option value="saturday">Saturday</option>
-      <option value="sunday">Sunday</option>
-      <option value="monday">Monday</option>
-      <option value="tuesday">Tuesday</option>
-    </select>
+  <div id="itinerary"></div>
 
-    <div id="map"></div>
-
-    <div class="day-section" id="saturday">
-      <h2>Saturday (Arrival & Explore North Goa)</h2>
-      <ul>
-        <li>Check-in at Para</li>
-        <li>Lunch: Vinayak Family Restaurant / Mojigao Cafe</li>
-        <li>Visit Chapora Fort & Vagator Viewpoint</li>
-        <li>Dinner: Artjuna or Soro Village Pub</li>
-      </ul>
-    </div>
-
-    <div class="day-section" id="sunday">
-      <h2>Sunday (Panjim & Fontainhas)</h2>
-      <ul>
-        <li>Brunch at Baba au Rhum</li>
-        <li>Explore Fontainhas, Altinho Viewpoint</li>
-        <li>Dona Paula Viewpoint / Mandovi River Cruise (optional)</li>
-        <li>Dinner at The Black Sheep Bistro or Mum’s Kitchen</li>
-      </ul>
-    </div>
-
-    <div class="day-section" id="monday">
-      <h2>Monday (Check-out & Move to South Goa)</h2>
-      <ul>
-        <li>Check-out → Scenic drive to South Goa</li>
-        <li>Stop at Three Kings Chapel en route</li>
-        <li>Check-in at Hotel Silva Heritage</li>
-        <li>Lunch at Martin’s Corner</li>
-      </ul>
-    </div>
-
-    <div class="day-section" id="tuesday">
-      <h2>Tuesday (Explore South Goa)</h2>
-      <ul>
-        <li>Visit Rachol Seminary Church / Chandor Heritage Homes</li>
-        <li>Lunch at Fisherman’s Wharf or Mike’s Place</li>
-        <li>Optional: Scenic drive to Palolem or Agonda viewpoints</li>
-      </ul>
-    </div>
-
-  </div>
+  <div id="map"></div>
 
   <script>
-    let map;
-    let markers = [];
+    const itineraries = {
+      sat: `<h2>Saturday</h2><p>Arrival at 11 AM. Head to Para, check-in. Explore Assagao, lunch at Vinayak, sunset at Vagator/Anjuna.</p>`,
+      sun: `<h2>Sunday</h2><p>Breakfast at Baba au Rhum. Visit Aguada Fort, SinQ Beach Club, Candolim/Calangute for the evening.</p>`,
+      mon: `<h2>Monday</h2><p>Check out from Para. Check in at Silva Heritage, South Goa. Visit Majorda Beach or Martin's Corner for lunch.</p>`,
+      tue: `<h2>Tuesday</h2><p>Explore Colva, Benaulim, Betalbatim. Dinner at Fisherman’s Wharf (Salcete).</p>`,
+      wed: `<h2>Wednesday</h2><p>Breakfast at The Southern Deck (Colva). Optional quick visit to Three Kings Chapel. Leave for airport by 11:30 AM.</p>`
+    };
 
-    const locations = [
-      { position: { lat: 15.6010, lng: 73.7516 }, title: "Chapora Fort", day: "saturday" },
-      { position: { lat: 15.5916, lng: 73.7396 }, title: "Vagator Viewpoint", day: "saturday" },
-      { position: { lat: 15.5759, lng: 73.7530 }, title: "Baba au Rhum", day: "sunday" },
-      { position: { lat: 15.5006, lng: 73.8278 }, title: "Fontainhas", day: "sunday" },
-      { position: { lat: 15.4534, lng: 73.8017 }, title: "Three Kings Chapel", day: "monday" },
-      { position: { lat: 15.2720, lng: 73.9601 }, title: "Martin’s Corner", day: "monday" },
-      { position: { lat: 15.3347, lng: 74.0775 }, title: "Rachol Seminary Church", day: "tuesday" },
-      { position: { lat: 15.1800, lng: 73.9854 }, title: "Fisherman’s Wharf", day: "tuesday" }
-    ];
-
-    function initMap() {
-      map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: 15.5, lng: 73.8 },
-        zoom: 10,
-      });
-
-      locations.forEach(loc => {
-        const marker = new google.maps.Marker({
-          position: loc.position,
-          map,
-          title: loc.title,
-        });
-        marker.day = loc.day;
-        markers.push(marker);
-      });
+    function showItinerary() {
+      const day = document.getElementById('daySelector').value;
+      document.getElementById('itinerary').innerHTML = itineraries[day] || '';
     }
 
-    document.getElementById("daySelector").addEventListener("change", (e) => {
-      const value = e.target.value;
-      markers.forEach(marker => {
-        if (value === "all" || marker.day === value) {
-          marker.setMap(map);
-        } else {
-          marker.setMap(null);
-        }
+    function initMap() {
+      const map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 10,
+        center: { lat: 15.2993, lng: 74.1240 },
+        styles: [
+          { elementType: "geometry", stylers: [{ color: "#1d2c4d" }] },
+          { elementType: "labels.text.stroke", stylers: [{ color: "#1a3646" }] },
+          { elementType: "labels.text.fill", stylers: [{ color: "#8ec3b9" }] }
+        ]
       });
-
-      ["saturday", "sunday", "monday", "tuesday"].forEach(day => {
-        document.getElementById(day).style.display = (value === "all" || value === day) ? "block" : "none";
-      });
-    });
+    }
   </script>
-
-  <script async
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgoBLWpQTMOQZNIc75H30mP44sesHGvJ8&callback=initMap">
-  </script>
-
+  <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgoBLWpQTMOQZNIc75H30mP44sesHGvJ8&callback=initMap"></script>
 </body>
-
 </html>
