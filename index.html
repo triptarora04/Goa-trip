@@ -152,8 +152,11 @@
             title: place.name,
             icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
           });
-          const infowindow = new google.maps.InfoWindow({ content: `<strong>${place.name}</strong>` });
-          marker.addListener("click", () => infowindow.open(map, marker));
+          const infowindow = new google.maps.InfoWindow();
+          marker.addListener("click", () => {
+            infowindow.setContent(`<strong>${place.name}</strong>`);
+            infowindow.open(map, marker);
+          });
           markers.push(marker);
           bounds.extend(place.position);
         });
@@ -182,15 +185,16 @@
       map = new google.maps.Map(document.getElementById("map"), {
         zoom: 10,
         center: { lat: 15.2993, lng: 73.9240 },
-       styles: [
-  { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
-  { elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
-  { elementType: "labels.text.stroke", stylers: [{ color: "#f5f5f5" }] },
-  { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
-  { featureType: "road.arterial", elementType: "geometry", stylers: [{ color: "#fdfcf8" }] },
-  { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#f8c967" }] },
-  { featureType: "water", elementType: "geometry", stylers: [{ color: "#c9c9c9" }] }
-]
+        styles: [
+          { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
+          { elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
+          { elementType: "labels.text.stroke", stylers: [{ color: "#f5f5f5" }] },
+          { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
+          { featureType: "road.arterial", elementType: "geometry", stylers: [{ color: "#fdfcf8" }] },
+          { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#f8c967" }] },
+          { featureType: "water", elementType: "geometry", stylers: [{ color: "#c9c9c9" }] }
+        ]
+      });
 
       new google.maps.Marker({
         position: { lat: 15.566862073096088, lng: 73.78208610902905 },
@@ -207,6 +211,7 @@
       });
     }
   </script>
-  <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgoBLWpQTMOQZNIc75H30mP44sesHGvJ8&callback=initMap"></script>
+  <script async src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
 </body>
 </html>
+
