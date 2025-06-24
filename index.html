@@ -152,11 +152,11 @@
             title: place.name,
             icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
           });
-          const infowindow = new google.maps.InfoWindow({ content: `<strong>${place.name}</strong>` });
-          marker.addListener("click", () => infowindow.open(map, marker));
-          markers.push(marker);
-          bounds.extend(place.position);
-        });
+         const infowindow = new google.maps.InfoWindow();
+marker.addListener("click", () => {
+  infowindow.setContent(`<strong>${place.name}</strong>`);
+  infowindow.open(map, marker);
+});
         map.fitBounds(bounds);
         const pathCoords = data.places.map(p => p.position);
         const polyline = new google.maps.Polyline({
