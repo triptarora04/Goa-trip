@@ -114,7 +114,7 @@
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ place, day })
+          body: JSON.stringify({ name: place, day })
         });
 
         const data = await res.json();
