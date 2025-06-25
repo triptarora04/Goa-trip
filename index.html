@@ -135,16 +135,49 @@
 
   <script>
     const itineraries = {
-      sat: {
-        text: `<h2>Saturday</h2><ul><li>Arrival at 11 AM</li><li>Head to Para, check-in</li><li>Explore Assagao</li><li>Lunch at Vinayak</li><li>Sunset at Vagator/Anjuna</li></ul>`,
-        places: [
-          { name: "Airbnb Para", position: { lat: 15.566862, lng: 73.782086 } },
-          { name: "Vinayak Restaurant", position: { lat: 15.591646, lng: 73.777928 } },
-          { name: "Vagator Beach", position: { lat: 15.5989, lng: 73.7397 } },
-          { name: "Anjuna Beach", position: { lat: 15.5751, lng: 73.7437 } }
-        ]
-      }
-    };
+  sat: {
+    text: `<h2>Saturday</h2><ul><li>Arrival at 11 AM</li><li>Head to Para, check-in</li><li>Explore Assagao</li><li>Lunch at Vinayak</li><li>Sunset at Vagator/Anjuna</li></ul>`,
+    places: [
+      { name: "Airbnb Para", position: { lat: 15.566862, lng: 73.782086 } },
+      { name: "Vinayak Restaurant", position: { lat: 15.591646, lng: 73.777928 } },
+      { name: "Vagator Beach", position: { lat: 15.5989, lng: 73.7397 } },
+      { name: "Anjuna Beach", position: { lat: 15.5751, lng: 73.7437 } }
+    ]
+  },
+  sun: {
+    text: `<h2>Sunday</h2><ul><li>Breakfast at Baba au Rhum</li><li>Visit Aguada Fort</li><li>SinQ Beach Club</li><li>Candolim/Calangute for the evening</li></ul>`,
+    places: [
+      { name: "Baba au Rhum", position: { lat: 15.5788, lng: 73.7528 } },
+      { name: "Aguada Fort", position: { lat: 15.4927, lng: 73.7739 } },
+      { name: "SinQ Beach Club", position: { lat: 15.5142, lng: 73.7649 } },
+      { name: "Candolim Beach", position: { lat: 15.5215, lng: 73.7621 } }
+    ]
+  },
+  mon: {
+    text: `<h2>Monday</h2><ul><li>Check out from Para</li><li>Check in at Silva Heritage, South Goa</li><li>Visit Majorda Beach</li><li>Lunch at Martin's Corner</li></ul>`,
+    places: [
+      { name: "Hotel Silva Heritage", position: { lat: 15.270661, lng: 73.934070 } },
+      { name: "Majorda Beach", position: { lat: 15.3118, lng: 73.9207 } },
+      { name: "Martin's Corner", position: { lat: 15.3035, lng: 73.9222 } }
+    ]
+  },
+  tue: {
+    text: `<h2>Tuesday</h2><ul><li>Explore Colva Beach</li><li>Visit Benaulim Beach</li><li>Relax at Betalbatim Beach</li><li>Dinner at The Fisherman’s Wharf (Salcete)</li></ul>`,
+    places: [
+      { name: "Colva Beach", position: { lat: 15.2796, lng: 73.9223 } },
+      { name: "Benaulim Beach", position: { lat: 15.2569, lng: 73.9167 } },
+      { name: "Betalbatim Beach", position: { lat: 15.2848, lng: 73.9272 } },
+      { name: "The Fisherman's Wharf", position: { lat: 15.2702, lng: 73.9394 } }
+    ]
+  },
+  wed: {
+    text: `<h2>Wednesday</h2><ul><li>Breakfast at The Southern Deck (Colva)</li><li>Optional visit to Three Kings Chapel</li><li>Leave for airport by 11:30 AM</li></ul>`,
+    places: [
+      { name: "The Southern Deck", position: { lat: 15.2786, lng: 73.9188 } },
+      { name: "Three Kings Chapel", position: { lat: 15.2765, lng: 73.8778 } }
+    ]
+  }
+};
 
     let map;
     let markers = [];
