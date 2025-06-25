@@ -47,7 +47,7 @@
       font-weight: bold;
     }
 
-    input, select, button {
+    gmpx-place-autocomplete, select, button {
       width: 100%;
       padding: 0.75rem;
       margin-bottom: 1rem;
@@ -77,13 +77,8 @@
   <div class="container">
     <h1>📝 Add Your Goa Trip Ideas</h1>
     <form id="placeForm">
-      <label for="placeName">Place Name</label>
-      <input
-        type="text"
-        id="placeName"
-        placeholder="Search for a place in Goa"
-        required
-      />
+      <label for="autocomplete">Place Name</label>
+      <gmpx-place-autocomplete id="autocomplete" placeholder="Search for a place in Goa"></gmpx-place-autocomplete>
 
       <label for="day">Select Day</label>
       <select id="day" required>
@@ -100,37 +95,23 @@
     <div class="message" id="msg"></div>
   </div>
 
-  <!-- Google Maps API script (replace with your actual key) -->
-  <script
-    async
-    defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgoBLWpQTMOQZNIc75H30mP44sesHGvJ8&libraries=places&callback=initAutocomplete"
-  ></script>
-
   <script>
-    let autocomplete;
-
-    function initAutocomplete() {
-      const input = document.getElementById("placeName");
-      autocomplete = new google.maps.places.Autocomplete(input, {
-        fields: ["place_id", "geometry", "name"]
-      });
-    }
-
     document.getElementById("placeForm").addEventListener("submit", async function(e) {
       e.preventDefault();
+      const autocomplete = document.getElementById("autocomplete");
       const day = document.getElementById("day").value;
       const msg = document.getElementById("msg");
-      const place = autocomplete.getPlace();
 
-      if (!place || !place.name || !place.geometry) {
-        msg.textContent = "❌ Please select a valid place from suggestions.";
+      const selectedPlace = autocomplete.getPlace();
+
+      if (!selectedPlace || !selectedPlace.id || !day) {
+        msg.textContent = "❌ Please select a valid place and day.";
         return;
       }
 
-      const name = place.name;
-      const lat = place.geometry.location.lat();
-      const lng = place.geometry.location.lng();
+      const name = selectedPlace.displayName;
+      const lat = selectedPlace.location.latitude;
+      const lng = selectedPlace.location.longitude;
 
       msg.textContent = "⏳ Adding place...";
       try {
@@ -138,9 +119,9 @@
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            name,
-            position: { lat, lng },
-            day
+            name: name,
+            position: { lat: lat, lng: lng },
+            day: day
           })
         });
 
@@ -157,5 +138,9 @@
       document.getElementById("placeForm").reset();
     });
   </script>
+
+  <!-- Load Google Maps and Extended Component Library -->
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgoBLWpQTMOQZNIc75H30mP44sesHGvJ8&libraries=places"></script>
+  <script async defer src="https://unpkg.com/@googlemaps/extended-component-library@1.0"></script>
 </body>
 </html>
