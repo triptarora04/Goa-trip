@@ -57,7 +57,7 @@
 <body>
   <h1>Suggest a Place for the Goa Trip 🏖️</h1>
   <form id="placeForm">
-    <input type="text" id="placeName" placeholder="Start typing a place..." autocomplete="off" required />
+    <input type="text" id="placeName" placeholder="Enter place name" required />
     
     <select id="day" required>
       <option value="">-- Select Day --</option>
@@ -73,24 +73,9 @@
   </form>
 
   <script>
-    let selectedPlace = "";
-
-    window.initAutocomplete = function () {
-      const input = document.getElementById("placeName");
-      const autocomplete = new google.maps.places.Autocomplete(input, {
-        types: ["establishment"],
-        componentRestrictions: { country: "in" }
-      });
-
-      autocomplete.addListener("place_changed", () => {
-        const place = autocomplete.getPlace();
-        selectedPlace = place.name || "";
-      });
-    };
-
     document.getElementById("placeForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const place = selectedPlace || document.getElementById("placeName").value.trim();
+      const place = document.getElementById("placeName").value.trim();
       const day = document.getElementById("day").value;
 
       if (!place || !day) {
@@ -107,15 +92,10 @@
       if (response.ok) {
         document.getElementById("status").textContent = "✅ Place added successfully!";
         document.getElementById("placeForm").reset();
-        selectedPlace = "";
       } else {
         document.getElementById("status").textContent = "❌ Failed to add. Try again.";
       }
     });
   </script>
-
-  <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgoBLWpQTMOQZNIc75H30mP44sesHGvJ8&libraries=places&callback=initAutocomplete"
-    async defer></script>
 </body>
 </html>
