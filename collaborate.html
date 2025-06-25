@@ -83,7 +83,7 @@
         return;
       }
 
-      const response = await fetch("https://goa-itinerary-backend.onrender.com/itinerary", {
+   const response = await fetch("https://goa-itinerary-backend.onrender.com/addPlace", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ place, day })
