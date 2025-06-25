@@ -47,7 +47,7 @@
       font-weight: bold;
     }
 
-    input, select, button, gmpx-place-autocomplete {
+    input, select, button {
       width: 100%;
       padding: 0.75rem;
       margin-bottom: 1rem;
@@ -77,12 +77,13 @@
   <div class="container">
     <h1>📝 Add Your Goa Trip Ideas</h1>
     <form id="placeForm">
-      <label for="autocomplete">Place Name</label>
-      <gmpx-place-autocomplete
-        id="autocomplete"
+      <label for="placeName">Place Name</label>
+      <input
+        type="text"
+        id="placeName"
         placeholder="Search for a place in Goa"
-        style="width: 100%;">
-      </gmpx-place-autocomplete>
+        required
+      />
 
       <label for="day">Select Day</label>
       <select id="day" required>
@@ -99,33 +100,48 @@
     <div class="message" id="msg"></div>
   </div>
 
-  <script type="module">
-    const form = document.getElementById("placeForm");
-    const msg = document.getElementById("msg");
+  <!-- Google Maps API script (replace with your actual key) -->
+  <script
+    async
+    defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgoBLWpQTMOQZNIc75H30mP44sesHGvJ8&libraries=places&callback=initAutocomplete"
+  ></script>
 
-    form.addEventListener("submit", async (e) => {
+  <script>
+    let autocomplete;
+
+    function initAutocomplete() {
+      const input = document.getElementById("placeName");
+      autocomplete = new google.maps.places.Autocomplete(input, {
+        fields: ["place_id", "geometry", "name"]
+      });
+    }
+
+    document.getElementById("placeForm").addEventListener("submit", async function(e) {
       e.preventDefault();
-
-      const autocomplete = document.getElementById("autocomplete");
-      const selectedPlace = autocomplete.getPlace();
       const day = document.getElementById("day").value;
+      const msg = document.getElementById("msg");
+      const place = autocomplete.getPlace();
 
-      if (!selectedPlace || !selectedPlace.id || !day) {
-        msg.textContent = "❌ Please select a valid place and day.";
+      if (!place || !place.name || !place.geometry) {
+        msg.textContent = "❌ Please select a valid place from suggestions.";
         return;
       }
 
-      const name = selectedPlace.displayName;
-      const lat = selectedPlace.location.latitude;
-      const lng = selectedPlace.location.longitude;
+      const name = place.name;
+      const lat = place.geometry.location.lat();
+      const lng = place.geometry.location.lng();
 
       msg.textContent = "⏳ Adding place...";
-
       try {
         const res = await fetch("https://goa-itinerary-backend.onrender.com/addPlace", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, position: { lat, lng }, day })
+          body: JSON.stringify({
+            name,
+            position: { lat, lng },
+            day
+          })
         });
 
         const data = await res.json();
@@ -138,14 +154,8 @@
         msg.textContent = "❌ Network error. Try again.";
       }
 
-      form.reset();
+      document.getElementById("placeForm").reset();
     });
   </script>
-
-  <!-- Google Maps API -->
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgoBLWpQTMOQZNIc75H30mP44sesHGvJ8&libraries=places"></script>
-
-  <!-- Google Extended Component Library -->
-  <script type="module" src="https://unpkg.com/@googlemaps/extended-component-library@1.0"></script>
 </body>
 </html>
