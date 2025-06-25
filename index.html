@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Goa Trip Itinerary</title>
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -36,6 +36,20 @@
     header h1 {
       font-size: 3rem;
       margin: 0;
+    }
+
+    #itineraryBox {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 240px;
+      height: 100vh;
+      overflow-y: auto;
+      background: rgba(0,0,0,0.75);
+      color: white;
+      padding: 1rem;
+      box-shadow: 4px 0 10px rgba(0,0,0,0.5);
+      z-index: 999;
     }
 
     #itinerary {
@@ -80,16 +94,16 @@
   </style>
 </head>
 <body>
-  <div id="itineraryBox" style="position: fixed; top: 0; left: 0; width: 300px; height: 100vh; overflow-y: auto; background: rgba(0,0,0,0.75); color: white; padding: 1rem; box-shadow: 4px 0 10px rgba(0,0,0,0.5); font-family: sans-serif; z-index: 999;">
-    <h2>🗓️ Itinerary</h2>
+  <div id="itineraryBox">
+    <h2>📍 Places of Interest</h2>
     <div id="itineraryContent">Loading...</div>
   </div>
 
-  <header style="margin-left: 320px;">
+  <header style="margin-left: 260px;">
     <h1>Goa Monsoon Trip</h1>
   </header>
 
-  <select id="daySelector" onchange="showItinerary()" style="margin-left: 320px;">
+  <select id="daySelector" onchange="showItinerary()" style="margin-left: 260px;">
     <option value="">-- Select Day --</option>
     <option value="sat">Saturday (Arrival, Para, North Goa)</option>
     <option value="sun">Sunday (North Goa)</option>
@@ -98,8 +112,8 @@
     <option value="wed">Wednesday (Departure)</option>
   </select>
 
-  <div id="itinerary" style="margin-left: 320px;"></div>
-  <div id="map" style="margin-left: 320px;"></div>
+  <div id="itinerary" style="margin-left: 260px;"></div>
+  <div id="map" style="margin-left: 260px;"></div>
 
   <script>
     async function loadItinerary() {
@@ -111,13 +125,12 @@
         for (const day in data) {
           const dayDiv = document.createElement("div");
           dayDiv.innerHTML = `<h3>${day.toUpperCase()}</h3>`;
-          data[day].forEach((place, index) => {
+          data[day].forEach((place) => {
             const item = document.createElement("div");
             item.style.marginBottom = "10px";
             item.innerHTML = `
               <strong>${place.name}</strong><br>
-              <small>📍 ${place.position.lat.toFixed(4)}, ${place.position.lng.toFixed(4)}</small><br>
-              <button onclick="deletePlace('${day}', ${index})" style="margin-top:5px; padding:4px 8px; font-size:0.8rem; background:red; color:white; border:none; border-radius:4px;">❌ Delete</button>
+              <small>📍 ${place.position.lat.toFixed(4)}, ${place.position.lng.toFixed(4)}</small>
             `;
             dayDiv.appendChild(item);
           });
@@ -128,37 +141,76 @@
       }
     }
 
-    async function deletePlace(day, index) {
-      const confirmDelete = confirm("Are you sure you want to delete this place?");
-      if (!confirmDelete) return;
-
-      const res = await fetch("https://goa-itinerary-backend.onrender.com/deletePlace", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ day, index })
-      });
-
-      if (res.ok) {
-        loadItinerary(); // refresh list
-      } else {
-        alert("❌ Failed to delete.");
-      }
-    }
-
     loadItinerary();
   </script>
+
   <script>
     const itineraries = {
-      /* your static itinerary stays here */
+      // Your existing static itineraries (optional or legacy)
     };
+
     let map;
     let markers = [];
     let polylines = [];
-    function showItinerary() {/* unchanged */}
-    function clearMap() {/* unchanged */}
-    function initMap() {/* unchanged */}
+
+    function showItinerary() {
+      const day = document.getElementById('daySelector').value;
+      const data = itineraries[day];
+      document.getElementById('itinerary').innerHTML = data ? data.text : '';
+      if (data && map) {
+        clearMap();
+        const bounds = new google.maps.LatLngBounds();
+        data.places.forEach(place => {
+          const marker = new google.maps.Marker({
+            position: place.position,
+            map: map,
+            title: place.name,
+            icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+          });
+          const infowindow = new google.maps.InfoWindow();
+          marker.addListener("click", () => {
+            infowindow.setContent(`<strong>${place.name}</strong>`);
+            infowindow.open(map, marker);
+          });
+          markers.push(marker);
+          bounds.extend(place.position);
+        });
+        map.fitBounds(bounds);
+        const pathCoords = data.places.map(p => p.position);
+        const polyline = new google.maps.Polyline({
+          path: pathCoords,
+          geodesic: true,
+          strokeColor: "#FF0000",
+          strokeOpacity: 0.8,
+          strokeWeight: 4,
+          map: map
+        });
+        polylines.push(polyline);
+      }
+    }
+
+    function clearMap() {
+      markers.forEach(m => m.setMap(null));
+      markers = [];
+      polylines.forEach(p => p.setMap(null));
+      polylines = [];
+    }
+
+    function initMap() {
+      map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 10,
+        center: { lat: 15.2993, lng: 73.9240 },
+        styles: [
+          { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
+          { elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
+          { elementType: "labels.text.stroke", stylers: [{ color: "#f5f5f5" }] },
+          { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
+          { featureType: "road.arterial", elementType: "geometry", stylers: [{ color: "#fdfcf8" }] },
+          { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#f8c967" }] },
+          { featureType: "water", elementType: "geometry", stylers: [{ color: "#c9c9c9" }] }
+        ]
+      });
+    }
   </script>
   <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgoBLWpQTMOQZNIc75H30mP44sesHGvJ8&callback=initMap"></script>
 </body>
