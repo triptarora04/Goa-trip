@@ -1,1 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Collaborate: Goa Trip Ideas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Google Sans', sans-serif;
+      background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: -1;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 5rem auto;
+      background: rgba(0,0,0,0.6);
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 1rem;
+      font-size: 2rem;
+    }
+
+    label {
+      display: block;
+      margin: 1rem 0 0.5rem;
+      font-weight: bold;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border: none;
+      border-radius: 0.6rem;
+      font-size: 1rem;
+    }
+
+    button {
+      background-color: #ff9800;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #e68900;
+    }
+
+    .message {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📝 Add Your Goa Trip Ideas</h1>
+    <form id="placeForm">
+      <label for="placeName">Place Name</label>
+      <input type="text" id="placeName" required placeholder="e.g. Thalassa Goa" />
+
+      <label for="day">Select Day</label>
+      <select id="day" required>
+        <option value="">-- Select Day --</option>
+        <option value="sat">Saturday</option>
+        <option value="sun">Sunday</option>
+        <option value="mon">Monday</option>
+        <option value="tue">Tuesday</option>
+        <option value="wed">Wednesday</option>
+      </select>
+
+      <button type="submit">Add to Itinerary</button>
+    </form>
+    <div class="message" id="msg"></div>
+  </div>
+
+  <script>
+    document.getElementById("placeForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const place = selectedPlace || document.getElementById("placeName").value.trim();
+      const day = document.getElementById("day").value;
+      const msg = document.getElementById("msg");
+
+      if (!place || !day) {
+        msg.textContent = "Please fill in all fields.";
+        return;
+      }
+
+      msg.textContent = "⏳ Adding place...";
+      try {
+        const res = await fetch("https://goa-itinerary-backend.onrender.com/addPlace", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ place, day })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          msg.textContent = "✅ Place added to itinerary!";
+        } else {
+          msg.textContent = "❌ Failed: " + (data.error || "Unknown error.");
+        }
+      } catch (err) {
+        msg.textContent = "❌ Network error. Try again.";
+      }
+
+      document.getElementById("placeForm").reset();
+    });
+  <script>
+  let selectedPlace = "";
+
+  function initAutocomplete() {
+    const input = document.getElementById("placeName");
+    const autocomplete = new google.maps.places.Autocomplete(input, {
+      types: ["establishment"],
+      componentRestrictions: { country: "in" }
+    });
+
+    autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace();
+      selectedPlace = place.name || "";
+    });
+  }
+</script>
+
+    <script
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgoBLWpQTMOQZNIc75H30mP44sesHGvJ8&libraries=places&callback=initAutocomplete"
+  async
+  defer
+></script>
+</body>
+</html>
 
