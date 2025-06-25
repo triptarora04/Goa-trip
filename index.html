@@ -28,20 +28,66 @@
       z-index: -1;
     }
 
+    header {
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    header h1 {
+      font-size: 3rem;
+      margin: 0;
+    }
+
+    #itinerary {
+      background: rgba(0,0,0,0.6);
+      margin: 2rem auto;
+      padding: 1.5rem;
+      width: 90%;
+      max-width: 900px;
+      border-radius: 1rem;
+    }
+
+    #map {
+      width: 90%;
+      max-width: 900px;
+      height: 400px;
+      margin: 1rem auto;
+      border-radius: 1rem;
+      border: 2px solid #fff;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    select {
+      width: 90%;
+      max-width: 900px;
+      padding: 0.7rem;
+      margin: 0 auto 1rem;
+      display: block;
+      border-radius: 0.6rem;
+      border: none;
+      background: rgba(255,255,255,0.9);
+      color: #333;
+      font-size: 1rem;
+    }
+
+    ul {
+      padding-left: 1.2rem;
+    }
+
+    ul li {
+      margin-bottom: 0.5rem;
+    }
+
     #itineraryBox {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      width: 200px;
-      max-height: 90vh;
-      overflow-y: auto;
+      width: 90%;
+      max-width: 900px;
+      margin: 1rem auto;
       background: rgba(255, 255, 255, 0.1);
       color: #fff;
       padding: 1rem;
       border-radius: 12px;
       box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.4);
       backdrop-filter: blur(6px);
-      z-index: 999;
     }
 
     #itineraryBox h2 {
@@ -63,68 +109,9 @@
       padding-left: 0.5rem;
       border-left: 2px solid #fff2;
     }
-
-    header {
-      text-align: center;
-      padding: 2rem 1rem;
-      margin-left: 240px;
-    }
-
-    header h1 {
-      font-size: 3rem;
-      margin: 0;
-    }
-
-    #itinerary {
-      background: rgba(0,0,0,0.6);
-      margin: 2rem auto;
-      padding: 1.5rem;
-      width: 90%;
-      max-width: 900px;
-      border-radius: 1rem;
-      margin-left: 240px;
-    }
-
-    #map {
-      width: 90%;
-      max-width: 900px;
-      height: 400px;
-      margin: 1rem auto;
-      border-radius: 1rem;
-      border: 2px solid #fff;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      margin-left: 240px;
-    }
-
-    select {
-      width: 90%;
-      max-width: 900px;
-      padding: 0.7rem;
-      margin: 0 auto 1rem;
-      display: block;
-      border-radius: 0.6rem;
-      border: none;
-      background: rgba(255,255,255,0.9);
-      color: #333;
-      font-size: 1rem;
-      margin-left: 240px;
-    }
-
-    ul {
-      padding-left: 1.2rem;
-    }
-
-    ul li {
-      margin-bottom: 0.5rem;
-    }
   </style>
 </head>
 <body>
-  <div id="itineraryBox">
-    <h2>📍 Places of Interest</h2>
-    <div id="itineraryContent">Loading...</div>
-  </div>
-
   <header>
     <h1>Goa Monsoon Trip</h1>
   </header>
@@ -141,6 +128,11 @@
   <div id="itinerary"></div>
   <div id="map"></div>
 
+  <div id="itineraryBox">
+    <h2>📍 Places of Interest</h2>
+    <div id="itineraryContent">Loading...</div>
+  </div>
+
   <script>
     const itineraries = {
       sat: {
@@ -151,8 +143,7 @@
           { name: "Vagator Beach", position: { lat: 15.5989, lng: 73.7397 } },
           { name: "Anjuna Beach", position: { lat: 15.5751, lng: 73.7437 } }
         ]
-      },
-      // Add other days here as needed
+      }
     };
 
     let map;
