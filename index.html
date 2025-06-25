@@ -143,7 +143,8 @@
       const places = dynamicItineraries[day];
       document.getElementById('itinerary').innerHTML = places
         ? `<h2>${day.toUpperCase()}</h2><ul>${places.map(p => `<li>${p.name}</li>`).join('')}</ul>`
-        : '';
+        : '<p>No itinerary available for this day.</p>';
+
       if (places && map) {
         clearMap();
         const bounds = new google.maps.LatLngBounds();
@@ -201,6 +202,10 @@
           });
           box.appendChild(dayDiv);
         }
+
+        // Show itinerary immediately for selected day
+        showItinerary();
+
       } catch (err) {
         box.textContent = "Failed to load itinerary.";
       }
@@ -213,4 +218,3 @@
   <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgoBLWpQTMOQZNIc75H30mP44sesHGvJ8&callback=initMap"></script>
 </body>
 </html>
-
