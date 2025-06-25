@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Goa Trip Itinerary</title>
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -28,9 +28,46 @@
       z-index: -1;
     }
 
+    #itineraryBox {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 200px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(6px);
+      z-index: 999;
+    }
+
+    #itineraryBox h2 {
+      margin-top: 0;
+      font-size: 1.2rem;
+      font-weight: 700;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding-bottom: 0.5rem;
+    }
+
+    #itineraryBox h3 {
+      font-size: 1rem;
+      margin: 1rem 0 0.5rem;
+      color: #ffd;
+    }
+
+    #itineraryBox div > div {
+      margin-bottom: 0.75rem;
+      padding-left: 0.5rem;
+      border-left: 2px solid #fff2;
+    }
+
     header {
       text-align: center;
       padding: 2rem 1rem;
+      margin-left: 240px;
     }
 
     header h1 {
@@ -45,6 +82,7 @@
       width: 90%;
       max-width: 900px;
       border-radius: 1rem;
+      margin-left: 240px;
     }
 
     #map {
@@ -55,6 +93,7 @@
       border-radius: 1rem;
       border: 2px solid #fff;
       box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      margin-left: 240px;
     }
 
     select {
@@ -68,6 +107,7 @@
       background: rgba(255,255,255,0.9);
       color: #333;
       font-size: 1rem;
+      margin-left: 240px;
     }
 
     ul {
@@ -77,34 +117,20 @@
     ul li {
       margin-bottom: 0.5rem;
     }
-
-    #itineraryBox {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 240px;
-      height: 100vh;
-      overflow-y: auto;
-      background: rgba(0,0,0,0.75);
-      color: white;
-      padding: 1rem;
-      box-shadow: 4px 0 10px rgba(0,0,0,0.5);
-      font-family: sans-serif;
-      z-index: 999;
-    }
   </style>
 </head>
 <body>
+
   <div id="itineraryBox">
     <h2>📍 Places of Interest</h2>
     <div id="itineraryContent">Loading...</div>
   </div>
 
-  <header style="margin-left: 260px;">
+  <header>
     <h1>Goa Monsoon Trip</h1>
   </header>
 
-  <select id="daySelector" onchange="showItinerary()" style="margin-left: 260px;">
+  <select id="daySelector" onchange="showItinerary()">
     <option value="">-- Select Day --</option>
     <option value="sat">Saturday (Arrival, Para, North Goa)</option>
     <option value="sun">Sunday (North Goa)</option>
@@ -113,53 +139,40 @@
     <option value="wed">Wednesday (Departure)</option>
   </select>
 
-  <div id="itinerary" style="margin-left: 260px;"></div>
-  <div id="map" style="margin-left: 260px;"></div>
+  <div id="itinerary"></div>
+  <div id="map"></div>
+
+  <script>
+    async function loadItinerary() {
+      const box = document.getElementById("itineraryContent");
+      try {
+        const res = await fetch("https://goa-itinerary-backend.onrender.com/itinerary");
+        const data = await res.json();
+        box.innerHTML = "";
+        for (const day in data) {
+          const dayDiv = document.createElement("div");
+          dayDiv.innerHTML = `<h3>${day.toUpperCase()}</h3>`;
+          data[day].forEach((place) => {
+            const item = document.createElement("div");
+            item.innerHTML = `
+              <strong>${place.name}</strong><br>
+              <small>📍 ${place.position.lat.toFixed(4)}, ${place.position.lng.toFixed(4)}</small>
+            `;
+            dayDiv.appendChild(item);
+          });
+          box.appendChild(dayDiv);
+        }
+      } catch (err) {
+        box.textContent = "Failed to load itinerary.";
+      }
+    }
+
+    loadItinerary();
+  </script>
 
   <script>
     const itineraries = {
-      sat: {
-        text: `<h2>Saturday</h2><ul><li>Arrival at 11 AM</li><li>Head to Para, check-in</li><li>Explore Assagao</li><li>Lunch at Vinayak</li><li>Sunset at Vagator/Anjuna</li></ul>`,
-        places: [
-          { name: "Airbnb Para", position: { lat: 15.566862073096088, lng: 73.78208610902905 } },
-          { name: "Vinayak Restaurant", position: { lat: 15.591646, lng: 73.777928 } },
-          { name: "Vagator Beach", position: { lat: 15.5989, lng: 73.7397 } },
-          { name: "Anjuna Beach", position: { lat: 15.5751, lng: 73.7437 } }
-        ]
-      },
-      sun: {
-        text: `<h2>Sunday</h2><ul><li>Breakfast at Baba au Rhum</li><li>Visit Aguada Fort</li><li>SinQ Beach Club</li><li>Candolim/Calangute for the evening</li></ul>`,
-        places: [
-          { name: "Baba au Rhum", position: { lat: 15.5788, lng: 73.7528 } },
-          { name: "Aguada Fort", position: { lat: 15.4927, lng: 73.7739 } },
-          { name: "SinQ Beach Club", position: { lat: 15.5142, lng: 73.7649 } },
-          { name: "Candolim Beach", position: { lat: 15.5215, lng: 73.7621 } }
-        ]
-      },
-      mon: {
-        text: `<h2>Monday</h2><ul><li>Check out from Para</li><li>Check in at Silva Heritage, South Goa</li><li>Visit Majorda Beach</li><li>Lunch at Martin's Corner</li></ul>`,
-        places: [
-          { name: "Hotel Silva Heritage", position: { lat: 15.270661, lng: 73.934070 } },
-          { name: "Majorda Beach", position: { lat: 15.3118, lng: 73.9207 } },
-          { name: "Martin's Corner", position: { lat: 15.3035, lng: 73.9222 } }
-        ]
-      },
-      tue: {
-        text: `<h2>Tuesday</h2><ul><li>Explore Colva Beach</li><li>Visit Benaulim Beach</li><li>Relax at Betalbatim Beach</li><li>Dinner at The Fisherman’s Wharf (Salcete)</li></ul>`,
-        places: [
-          { name: "Colva Beach", position: { lat: 15.2796, lng: 73.9223 } },
-          { name: "Benaulim Beach", position: { lat: 15.2569, lng: 73.9167 } },
-          { name: "Betalbatim Beach", position: { lat: 15.2848, lng: 73.9272 } },
-          { name: "The Fisherman's Wharf", position: { lat: 15.2702, lng: 73.9394 } }
-        ]
-      },
-      wed: {
-        text: `<h2>Wednesday</h2><ul><li>Breakfast at The Southern Deck (Colva)</li><li>Optional visit to Three Kings Chapel</li><li>Leave for airport by 11:30 AM</li></ul>`,
-        places: [
-          { name: "The Southern Deck", position: { lat: 15.2786, lng: 73.9188 } },
-          { name: "Three Kings Chapel", position: { lat: 15.2765, lng: 73.8778 } }
-        ]
-      }
+      // (Your static itinerary data if needed)
     };
 
     let map;
@@ -212,38 +225,12 @@
     function initMap() {
       map = new google.maps.Map(document.getElementById("map"), {
         zoom: 10,
-        center: { lat: 15.2993, lng: 73.9240 }
-      });
-    }
-
-    async function loadItinerary() {
-      const box = document.getElementById("itineraryContent");
-      try {
-        const res = await fetch("https://goa-itinerary-backend.onrender.com/itinerary");
-        const data = await res.json();
-        box.innerHTML = "";
-        for (const day in data) {
-          const dayDiv = document.createElement("div");
-          dayDiv.innerHTML = `<h3>${day.toUpperCase()}</h3>`;
-          data[day].forEach((place) => {
-            const item = document.createElement("div");
-            item.style.marginBottom = "10px";
-            item.innerHTML = `
-              <strong>${place.name}</strong><br>
-              <small>📍 ${place.position.lat.toFixed(4)}, ${place.position.lng.toFixed(4)}</small>
-            `;
-            dayDiv.appendChild(item);
-          });
-          box.appendChild(dayDiv);
-        }
-      } catch (err) {
-        box.textContent = "Failed to load itinerary.";
-      }
-    }
-
-    loadItinerary();
-  </script>
-
-  <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgoBLWpQTMOQZNIc75H30mP44sesHGvJ8&callback=initMap"></script>
-</body>
-</html>
+        center: { lat: 15.2993, lng: 73.9240 },
+        styles: [
+          { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
+          { elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
+          { elementType: "labels.text.stroke", stylers: [{ color: "#f5f5f5" }] },
+          { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
+          { featureType: "road.arterial", elementType: "geometry", stylers: [{ color: "#fdfcf8" }] },
+          { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#f8c967" }] },
+          { featureType: "water", elementType: "geometry",
