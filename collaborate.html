@@ -78,7 +78,11 @@
     <h1>📝 Add Your Goa Trip Ideas</h1>
     <form id="placeForm">
       <label for="autocomplete">Place Name</label>
-      <gmpx-place-autocomplete id="autocomplete" placeholder="Search for a place in Goa"></gmpx-place-autocomplete>
+    <gmpx-place-autocomplete
+  id="autocomplete"
+  placeholder="Search for a place in Goa"
+  style="width: 100%;"
+></gmpx-place-autocomplete>
 
       <label for="day">Select Day</label>
       <select id="day" required>
@@ -139,8 +143,10 @@
     });
   </script>
 
-  <!-- Load Google Maps and Extended Component Library -->
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgoBLWpQTMOQZNIc75H30mP44sesHGvJ8&libraries=places"></script>
-  <script async defer src="https://unpkg.com/@googlemaps/extended-component-library@1.0"></script>
+<!-- Load Google Maps JS API -->
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgoBLWpQTMOQZNIc75H30mP44sesHGvJ8&libraries=places"></script>
+
+<!-- Load Extended Component Library for <gmpx-place-autocomplete> -->
+<script async defer src="https://unpkg.com/@googlemaps/extended-component-library@1.4"></script>
 </body>
 </html>
