@@ -120,7 +120,6 @@
   </style>
 </head>
 <body>
-
   <div id="itineraryBox">
     <h2>📍 Places of Interest</h2>
     <div id="itineraryContent">Loading...</div>
@@ -143,6 +142,71 @@
   <div id="map"></div>
 
   <script>
+    const itineraries = {
+      sat: {
+        text: `<h2>Saturday</h2><ul><li>Arrival at 11 AM</li><li>Head to Para, check-in</li><li>Explore Assagao</li><li>Lunch at Vinayak</li><li>Sunset at Vagator/Anjuna</li></ul>`,
+        places: [
+          { name: "Airbnb Para", position: { lat: 15.566862, lng: 73.782086 } },
+          { name: "Vinayak Restaurant", position: { lat: 15.591646, lng: 73.777928 } },
+          { name: "Vagator Beach", position: { lat: 15.5989, lng: 73.7397 } },
+          { name: "Anjuna Beach", position: { lat: 15.5751, lng: 73.7437 } }
+        ]
+      },
+      // Add other days here as needed
+    };
+
+    let map;
+    let markers = [];
+    let polylines = [];
+
+    function showItinerary() {
+      const day = document.getElementById('daySelector').value;
+      const data = itineraries[day];
+      document.getElementById('itinerary').innerHTML = data ? data.text : '';
+      if (data && map) {
+        clearMap();
+        const bounds = new google.maps.LatLngBounds();
+        data.places.forEach(place => {
+          const marker = new google.maps.Marker({
+            position: place.position,
+            map: map,
+            title: place.name
+          });
+          const infowindow = new google.maps.InfoWindow({
+            content: `<strong>${place.name}</strong>`
+          });
+          marker.addListener("click", () => infowindow.open(map, marker));
+          markers.push(marker);
+          bounds.extend(place.position);
+        });
+        map.fitBounds(bounds);
+
+        const polyline = new google.maps.Polyline({
+          path: data.places.map(p => p.position),
+          geodesic: true,
+          strokeColor: "#FF0000",
+          strokeOpacity: 0.8,
+          strokeWeight: 4,
+          map: map
+        });
+        polylines.push(polyline);
+      }
+    }
+
+    function clearMap() {
+      markers.forEach(m => m.setMap(null));
+      polylines.forEach(p => p.setMap(null));
+      markers = [];
+      polylines = [];
+    }
+
+    function initMap() {
+      map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 10,
+        center: { lat: 15.2993, lng: 73.9240 }
+      });
+    }
+
     async function loadItinerary() {
       const box = document.getElementById("itineraryContent");
       try {
@@ -167,70 +231,10 @@
       }
     }
 
-    loadItinerary();
+    window.onload = () => {
+      loadItinerary();
+    }
   </script>
-
-  <script>
-    const itineraries = {
-      // (Your static itinerary data if needed)
-    };
-
-    let map;
-    let markers = [];
-    let polylines = [];
-
-    function showItinerary() {
-      const day = document.getElementById('daySelector').value;
-      const data = itineraries[day];
-      document.getElementById('itinerary').innerHTML = data ? data.text : '';
-      if (data && map) {
-        clearMap();
-        const bounds = new google.maps.LatLngBounds();
-        data.places.forEach(place => {
-          const marker = new google.maps.Marker({
-            position: place.position,
-            map: map,
-            title: place.name,
-            icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-          });
-          const infowindow = new google.maps.InfoWindow();
-          marker.addListener("click", () => {
-            infowindow.setContent(`<strong>${place.name}</strong>`);
-            infowindow.open(map, marker);
-          });
-          markers.push(marker);
-          bounds.extend(place.position);
-        });
-        map.fitBounds(bounds);
-        const pathCoords = data.places.map(p => p.position);
-        const polyline = new google.maps.Polyline({
-          path: pathCoords,
-          geodesic: true,
-          strokeColor: "#FF0000",
-          strokeOpacity: 0.8,
-          strokeWeight: 4,
-          map: map
-        });
-        polylines.push(polyline);
-      }
-    }
-
-    function clearMap() {
-      markers.forEach(m => m.setMap(null));
-      markers = [];
-      polylines.forEach(p => p.setMap(null));
-      polylines = [];
-    }
-
-    function initMap() {
-      map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 10,
-        center: { lat: 15.2993, lng: 73.9240 },
-        styles: [
-          { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
-          { elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
-          { elementType: "labels.text.stroke", stylers: [{ color: "#f5f5f5" }] },
-          { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
-          { featureType: "road.arterial", elementType: "geometry", stylers: [{ color: "#fdfcf8" }] },
-          { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#f8c967" }] },
-          { featureType: "water", elementType: "geometry",
+  <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgoBLWpQTMOQZNIc75H30mP44sesHGvJ8&callback=initMap"></script>
+</body>
+</html>
